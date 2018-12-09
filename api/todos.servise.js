@@ -13,9 +13,6 @@ module.exports = {
 function getTodos() {
 
     return todosModel.find().then(todos => {
-        console.log('- iM in todos motherfukcer----------------------')
-        console.log(todos)
-        console.log('-----------------------')
         return todos;
     });
 
@@ -31,7 +28,7 @@ function createTodo(data) {
         name: todoName
     });
 
-    return newTodo.save();
+    return newTodo.save().then(() => getTodos());
 }
 
 function updateTodo(todoId, data) {
@@ -47,8 +44,10 @@ function updateTodo(todoId, data) {
         .then((todo) => {
             todo = Object.assign(todo, data);
             return todo.save();
-        });
+        })
+        .then(() => getTodos());
 }
+
 function removeTodo(todoId) {
 
     // return todosModel.remove({_id: todoId})
@@ -57,7 +56,11 @@ function removeTodo(todoId) {
     //     })
     return todosModel.findOne({_id: todoId})
         .then((removed) => {
+            if (!removed) {
+                throw new Error('No todod in database')
+            }
             removed.remove();
-        });
+        })
+        .then(() => getTodos());
 
 }

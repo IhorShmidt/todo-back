@@ -10,36 +10,48 @@ module.exports = {
     removeTodo
 };
 
-function getTodos(req, res) {
+function getTodos(req, res, next) {
 
     todosService.getTodos().then((todos) => {
         res.status(200).json(todos);
-    });
+    })
+        .catch((err) => {
+            next(err);
+        });;
 
 }
 
-function createTodo(req, res) {
+function createTodo(req, res, next) {
 
     const data = req.body;
 
     todosService.createTodo(data)
-        .then((newTodo) => {
-            res.status(200).json(newTodo);
+        .then((todos) => {
+            res.status(200).json(todos);
         })
+        .catch((err) => {
+            next(err);
+        });
 }
 
-function updateTodo(req, res) {
+function updateTodo(req, res, next) {
     const id = req.param('id');
 
     const data = req.body;
-    todosService.updateTodo(id, data).then((updatedTodo) => {
-        res.status(200).json(updatedTodo);
-    });
+    todosService.updateTodo(id, data).then((todos) => {
+        res.status(200).json(todos);
+    })
+        .catch((err) => {
+            next(err);
+        });
 }
 
-function removeTodo(req, res) {
+function removeTodo(req, res, next) {
     const todoId = req.param('id');
-    todosService.removeTodo(todoId).then(() => {
-        res.status(200).json({ok: 'ok'})
+    todosService.removeTodo(todoId).then((todos) => {
+        res.status(200).json(todos);
     })
+        .catch((err) => {
+            next(err);
+        });
 }
